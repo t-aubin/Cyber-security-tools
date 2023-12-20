@@ -5,7 +5,7 @@ Connect-MgGraph -Scopes "User.Read.All", "UserAuthenticationMethod.Read.All"
 $LogDate = Get-Date -f yyyyMMddhhmm
 
 # Define CSV file export location variable
-$Csvfile = "C:\Users\TDiGrego\DownloadsMFAUsers_$LogDate.csv"
+$Csvfile = "C:\Users\ENTER USERNAME HERE\DownloadsMFAUsers_$LogDate.csv"
 
 # Get all Azure users using the Microsoft Graph Beta API
 $users = Get-MgBetaUser -All

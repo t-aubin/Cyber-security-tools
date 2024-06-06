@@ -1,3 +1,7 @@
+# This program will take a CS IDP Comprimissed Account Password CSV and compare it to a Have i been pwned Excel file. It allows the user to specify which breach they are searching on and prints the matching uers to a CSV file. (Can also specify "All" to search all breaches)
+# You may need to modify the filter and data manipulation it does based on your specific user naming conventions. In its current form it removes the '@' and underscores from the CS IDP list. It also filters the CS IDP list and only selects accounts that are both Human and not Disabled.
+
+#WARNING there is one library that does not ccome prepackaged with python that you will need for this to work correctly. 
 # Make sure to install pandas
 # Windows: pip install pandas
 # Linux: pip3 install pandas

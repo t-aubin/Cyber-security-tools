@@ -1,56 +1,78 @@
 import pandas as pd
-import csv
 from tkinter import Tk, filedialog
+import tkinter as tk
+from datetime import datetime
 
-# Initialize Tkinter
-root = Tk()
-root.withdraw()  # Hide the main window
+def select_excel_file():
+    root = Tk()
+    root.withdraw()  # Hide the root window
+    file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx;*.xls")])
+    return file_path
 
-# Prompt the user to select the first Excel file
-print("Select the first Excel file:")
-file_path_1 = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx"), ("All files", "*.*")])
+def select_csv_file():
+    root = tk.Tk()
+    root.withdraw()  # Hide the root window
+    file_path = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv"), ("All files", "*.*")])
+    return file_path
 
-# Prompt the user to select the second CSV file
-print("Select the second CSV file:")
-file_path_2 = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv"), ("All files", "*.*")])
+def process_emails(pre_filtered_emails):
+    processed_emails = []
+    for email in pre_filtered_emails:
+        # Remove "aber-" from the beginning
+        if email.startswith("aber-"):
+            email = email[5:]
+        # Remove "@" and replace underscores with spaces
+        email = email.replace("@", "").replace("_", " ")
+        processed_emails.append(email.lower())
+    return processed_emails
 
-# Load the data from the Excel file (file_path_1) into memory
-df1 = pd.read_excel(file_path_1)
+def main():
+    excel_file_path = select_excel_file()
+    csv_file_path = select_csv_file()
 
-# Load only the second column (column B) of the CSV file (file_path_2) into memory
-with open(file_path_2, 'r') as csvfile:
-    csv_reader = csv.reader(csvfile)
-    data = [row[1] for row in csv_reader]  # Extract values from the second column only
+    if excel_file_path and csv_file_path:
+        try:
+            # Read the Excel file into a DataFrame
+            df_excel = pd.read_excel(excel_file_path)
 
-# Convert the data to DataFrame
-df2 = pd.DataFrame(data, columns=['Processed Email Alias'])  # Assign column name
+            # Prompt the user for input
+            user_input = input("Enter a string to filter breaches: ")
 
-# Preprocess the values in the second column (column B) of the CSV file
-def preprocess_email_alias(email_alias):
-    # Remove the '@' symbol
-    email_alias = email_alias.replace('@', '')
-    # Replace underscores with spaces
-    email_alias = email_alias.replace('_', ' ')
-    # Delete the 'aber-' prefix if it exists
-    if email_alias.startswith('aber-'):
-        email_alias = email_alias[len('aber-'):]
-    return email_alias.lower()  # Convert to lowercase for case-insensitive comparison
+            # Filter the DataFrame based on the user input
+            filtered_df_excel = df_excel[df_excel['Breaches'].str.contains(user_input, na=False)]
 
-# Apply preprocessing to the values in the 'Processed Email Alias' column
-df2['Processed Email Alias'] = df2['Processed Email Alias'].apply(preprocess_email_alias)
+            # Get the 'Email alias' values for the filtered rows
+            pre_filtered_emails = filtered_df_excel['Email alias'].tolist()
 
-# Add the 'Processed Email Alias' column to df1 after processing the email alias
-df1['Processed Email Alias'] = df1['Email alias'].str.lower()
+            # Process the emails
+            processed_emails = process_emails(pre_filtered_emails)
 
-# Compare the values in column A of the Excel file with the processed values from column B of the CSV file
-matches = df1['Processed Email Alias'].isin(df2['Processed Email Alias'])
+            # Read the CSV file into a DataFrame
+            df_csv = pd.read_csv(csv_file_path)
 
-# Create a DataFrame with the results
-comparison_results = df1.copy()
-comparison_results['Match'] = matches
+            # Filter the DataFrame
+            filtered_df_csv = df_csv[(df_csv['Disabled'] == 'No') & (df_csv['User Classification'] == 'Human')]
 
-# Save the comparison results to a new Excel file
-output_file_path = 'comparison_results.xlsx'
-comparison_results.to_excel(output_file_path, index=False)
+            # Create the CS IDP list
+            cs_idp_list = [user.lower() for user in filtered_df_csv['User'].tolist()]
 
-print(f"Comparison results saved to {output_file_path}")
+            # Find matches
+            matched_users = [email for email in processed_emails if email in cs_idp_list]
+
+            # Get the number of matches
+            num_matches = len(matched_users)
+            print(f"Number of matches: {num_matches}")
+
+            # Save matched users to a CSV file
+            current_date = datetime.now().strftime("%Y-%m-%d")
+            output_filename = f"{user_input}_matches_{current_date}.csv"
+            pd.DataFrame(matched_users, columns=["Matched Users"]).to_csv(output_filename, index=False)
+            print(f"Matched users saved to {output_filename}")
+
+        except Exception as e:
+            print(f"An error occurred while reading the files or processing the data: {e}")
+    else:
+        print("No file selected.")
+
+if __name__ == "__main__":
+    main()

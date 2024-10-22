@@ -1,3 +1,29 @@
+"""
+Purpose of the Script:
+This Python script checks the security status of a server by querying the CrowdStrike and InsightVM APIs.
+It performs the following tasks:
+- Verifies if a specified hostname exists in CrowdStrike.
+- Retrieves the risk score for the asset from InsightVM.
+- Generates a formatted checklist report with the asset's security status.
+- Saves the report to a specified directory, using a provided ticket number.
+- Automatically opens the report in Notepad for easy review.
+
+Requirements for the Script to Work:
+1. Install the necessary libraries:
+   - `falconpy` for interacting with the CrowdStrike API.
+   - `requests` for making HTTP requests to the InsightVM API.
+
+   2. Replace placeholder values:
+- Set the `CLIENT_ID` and `CLIENT_SECRET` for CrowdStrike API access.
+- Set the `USERNAME` and `PASSWORD` for InsightVM API authentication.
+- Update the `BASE_URL` to point to your InsightVM console URL.
+
+3. Ensure you have network access to the APIs and the required permissions to query asset data.
+
+4. Adjust the file path in the script if needed, based on your environment.
+
+"""
+
 from falconpy import Hosts
 import os
 import subprocess

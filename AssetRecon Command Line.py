@@ -113,7 +113,7 @@ Date: {today}
 """
     
     # Define the file name and path
-    file_path = f"C:Enter Your own filepath Cyber Security Server Build Final Check {ticket_number}.txt"
+    file_path = rf"C:Enter Your own filepath Cyber Security Server Build Final Check {ticket_number}.txt"
     
     # Write the content to the file
     with open(file_path, 'w') as file:

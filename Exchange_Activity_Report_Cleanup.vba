@@ -1,3 +1,17 @@
+'-Steps to Implement
+'-Rename Sheet to Sheet1
+'-Open VBA Editor:
+
+'-Press Alt + F11 in Excel.
+'-Insert the Script:
+
+'-Click Insert > Module and paste the code above.
+'-Run the Macro:
+
+'-Press Alt + F8, select DeleteSpecifiedColumns, and click Run.
+
+'-Remove module and save 
+
 Sub DeleteSpecificColumns()
     Dim ws As Worksheet
     On Error Resume Next ' Prevent macro from stopping on errors

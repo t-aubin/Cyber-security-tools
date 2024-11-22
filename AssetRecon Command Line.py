@@ -118,7 +118,7 @@ def main():
     client_secret = args.client_secret
     password = args.password
 
-    hosts_api = Hosts(client_id="b3dd715f835743f0aeeb362002165f11", client_secret=client_secret)
+    hosts_api = Hosts(client_id="CLIENT ID", client_secret=client_secret)
 
     asset_exists, asset_online = is_asset_in_crowdstrike(hosts_api, hostname)
     

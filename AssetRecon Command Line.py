@@ -1,3 +1,5 @@
+# To run 'python script.py <ticket_number> <hostname> <client_secret> <password>'
+
 import argparse
 from falconpy import Hosts
 import requests
